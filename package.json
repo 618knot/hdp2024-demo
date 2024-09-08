@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@p5-wrapper/next": "^1.0.3",
+    "@p5-wrapper/react": "^4.4.2",
+    "@radix-ui/react-menubar": "^1.1.1",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -17,6 +20,7 @@
     "hdp2024-demo": "file:",
     "lucide-react": "^0.437.0",
     "next": "14.2.7",
+    "p5": "^1.10.0",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.5.2",
@@ -24,6 +28,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/p5": "^1.7.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
