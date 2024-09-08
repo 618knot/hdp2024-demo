@@ -1,20 +1,22 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { contents } from "@/components/contents";
+
 export default function ModeSelectContainer() {
   return(
     <div className="flex gap-3">
-      <Button asChild>
-        <Link href="/bluetooth">
-          Bluetooth
-        </Link>
-      </Button>
-
-      <Button>
-        <Link href="/nfc">
-          NFC
-        </Link>
-      </Button>
+      {
+        contents.map((content, index) => {
+          return(
+          <Button key={index} asChild>
+            <Link href={content.path}>
+              {content.content}
+            </Link>
+          </Button>
+          )
+        })
+      }
     </div>
   );
 }
