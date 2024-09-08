@@ -1,8 +1,10 @@
 "use client";
 
+import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { SmartphoneNfc } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 
 export default function Home() {
@@ -10,6 +12,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">
+      <Title>NFC<SmartphoneNfc className="ml-0.5 opacity-60" /></Title>
       <Button onClick={() => handleNFC(results, setResults)}>Scan your card</Button>
       <ScrollArea className="h-72 w-48 rounded-md border">
         <div className="p-4">

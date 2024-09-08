@@ -5,12 +5,16 @@ import { requestDevice } from "@/util/ble/connect";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import sketch from "@/p5/sketch.js";
 import { useState } from "react";
+import Title from "@/components/Title";
+import { contents } from "@/components/contents";
+import { Bluetooth } from "lucide-react";
 
 export default function Home() {
   const [xVal, setXVal] = useState<number>(0);
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">
+      <Title>Bluetooth<Bluetooth className="ml-0.5 opacity-60" /></Title>
       <Button onClick={() => {
         const dev = requestDevice();
         console.log(dev);

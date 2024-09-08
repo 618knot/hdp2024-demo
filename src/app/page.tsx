@@ -1,9 +1,11 @@
+import Title from "@/components/Title";
 import ModeSelectContainer from "./_components/ModeSelectContainer";
+import { Cog } from "lucide-react";
 
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-xl font-bold my-8">ハードウェアデザインプロジェクト DEMO</h1>
+      <Title><Cog className="opacity-60" />ハードウェアデザインプロジェクト DEMO</Title>
       <ModeSelectContainer />
     </main>
   );
