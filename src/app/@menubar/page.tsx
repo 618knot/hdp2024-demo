@@ -5,6 +5,7 @@ import {
   Menubar,
   MenubarMenu,
 } from "@/components/ui/menubar"
+import { Separator } from "@/components/ui/separator"
 import { Home } from "lucide-react"
 import Link from "next/link"
  
@@ -26,6 +27,7 @@ export default function MenubarDemo() {
             )
           })
         }
+        <Separator className="h-2/3" orientation="vertical" />
         <ModeToggle />
       </MenubarMenu>
     </Menubar>
