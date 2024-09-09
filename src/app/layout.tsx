@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const NotoSansJP = Noto_Sans_JP({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
+          <Toaster />
           {menubar}
           {children}
         </ThemeProvider>
