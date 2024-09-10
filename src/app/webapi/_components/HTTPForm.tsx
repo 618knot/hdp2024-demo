@@ -1,10 +1,8 @@
-"use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, Flame, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,6 +29,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { Dispatch, SetStateAction } from "react"
+import { ResultProps } from "../_types/ResultProps"
+import { Toaster } from "@/components/ui/sonner"
+
+export const dynamic = 'force-dynamic';
 
 const httpMethods = [
   { label: "GET", value: "GET" },
@@ -51,25 +54,50 @@ const FormSchema = z.object({
   httpMethods: z.string({
     required_error: "HTTPメソッドを選択してください",
   })
-})
+});
 
-export default function HTTPForm() {
+type HTTPFormProps = {
+  setResult: Dispatch<SetStateAction<ResultProps | undefined>>;
+  setIsPending: Dispatch<SetStateAction<boolean>>;
+  isPending: boolean;
+}
+
+export default function HTTPForm({setResult, setIsPending, isPending}: HTTPFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    })
+
+    setIsPending(true);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(data.url, {
+          method: data.httpMethods,
+        });
+    
+        const json = await response.json();
+        const contentType = response.headers.get("Content-Type") || "";
+    
+        const resultData: ResultProps = {
+          data: json,
+          status: response.status,
+          statusText: response.statusText,
+          contentType: contentType,
+        };
+    
+        setResult(resultData);
+      } catch (error: any) {
+        toast(error.message, {
+          icon: <Flame />,
+          style: { background: "#dc2626", color: "#fff" },
+        });
+      } finally {
+        setIsPending(false);
+      }
+    };
+    
+    fetchData();
   }
 
   return (
@@ -136,6 +164,7 @@ export default function HTTPForm() {
               </FormDescription>
               <FormMessage />
             </FormItem>
+            // TODO: リクエストボディ
           )}
         />
         <FormField
@@ -154,7 +183,11 @@ export default function HTTPForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isPending}>
+          {
+            isPending ? <Loader2 className="animate-spin" /> : "Submit"
+          }
+        </Button>
       </form>
     </Form>
   )
