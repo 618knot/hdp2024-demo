@@ -31,9 +31,20 @@ import {
 import { cn } from "@/lib/utils"
 import { Dispatch, SetStateAction } from "react"
 import { ResultProps } from "../_types/ResultProps"
-import { Toaster } from "@/components/ui/sonner"
+import { Textarea } from "@/components/ui/textarea"
 
 export const dynamic = 'force-dynamic';
+
+const isValidJson = (str: string): boolean => {
+  try{
+    JSON.parse(str);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+const dontNeedBody = (method: string): boolean => [undefined ,"GET", "HEAD", "OPTIONS"].includes(method);
 
 const httpMethods = [
   { label: "GET", value: "GET" },
@@ -53,7 +64,10 @@ const FormSchema = z.object({
   }),
   httpMethods: z.string({
     required_error: "HTTPメソッドを選択してください",
-  })
+  }),
+  requestBody: z.string().refine(isValidJson, {
+    message: "正しいJSON形式で入力してください",
+  }).optional(),
 });
 
 type HTTPFormProps = {
@@ -65,7 +79,9 @@ type HTTPFormProps = {
 export default function HTTPForm({setResult, setIsPending, isPending}: HTTPFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-  })
+  });
+
+  const httpMethod = form.watch("httpMethods");
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
 
@@ -74,6 +90,12 @@ export default function HTTPForm({setResult, setIsPending, isPending}: HTTPFormP
       try {
         const response = await fetch(data.url, {
           method: data.httpMethods,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: dontNeedBody(data.httpMethods) || !data.requestBody
+          ? undefined
+          : JSON.stringify(JSON.parse(data.requestBody)),
         });
     
         const json = await response.json();
@@ -164,7 +186,6 @@ export default function HTTPForm({setResult, setIsPending, isPending}: HTTPFormP
               </FormDescription>
               <FormMessage />
             </FormItem>
-            // TODO: リクエストボディ
           )}
         />
         <FormField
@@ -182,6 +203,26 @@ export default function HTTPForm({setResult, setIsPending, isPending}: HTTPFormP
               <FormMessage />
             </FormItem>
           )}
+        />
+        <FormField
+          control={form.control}
+          name="requestBody"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Request body</FormLabel>
+              <FormControl>
+                <Textarea
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                リクエストボディ
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+          disabled={dontNeedBody(httpMethod)}
         />
         <Button type="submit" disabled={isPending}>
           {
