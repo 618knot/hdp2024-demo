@@ -1,13 +1,5 @@
-// デバイスを要求する関数
-export async function requestDevice() {
-  const device = await navigator.bluetooth.requestDevice({
-    acceptAllDevices: true
-  });
+// デバイスを要求
+export async function requestDevice(options?: Object) {
+  const device = await navigator.bluetooth.requestDevice(options);
   return device;
-}
-
-// デバイスに接続する関数
-export async function connectToDevice(device: any) {
-  const server = await device.gatt.connect();
-  return server;
 }
