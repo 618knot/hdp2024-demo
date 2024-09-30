@@ -16,9 +16,9 @@ let intervalID: NodeJS.Timeout;
 let device: any;
 
 export default function Home() {
-  const [xVal, setXVal] = useState<number>(0);
+  const [characteristic, setCharacteristic] = useState<Object>({});
   const [isPending, setIsPending] = useState<boolean>(false);
-  const [wasntSettedInterval, setWasntSettedInterval] = useState<boolean>(true);
+  const [isConnecting, setisConnecting] = useState<boolean>(false);
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">
@@ -28,10 +28,10 @@ export default function Home() {
         ? <Button onClick={() => {
           clearInterval(intervalID);
           device.gatt.disconnect();
-          setWasntSettedInterval(true);
+          setisConnecting(false);
           setIsPending(false);
         }}
-        disabled={wasntSettedInterval}
+        disabled={!isConnecting}
         >
             接続を停止
           </Button>
@@ -47,33 +47,15 @@ export default function Home() {
           await device.gatt.connect();
           await console.log(isPending)
           const primary = await device.gatt.getPrimaryService(SERVICE_UUID);
-          const characteristic = await primary.getCharacteristic(CHAR_UUID);
-          if(!intervalID) {
-            intervalID = await setInterval(
-              async () => {
-                try {
-                  const value: DataView = await characteristic.readValue();
-            
-                  const decoder = new TextDecoder("utf-8");
-                  const decodedJson = JSON.parse(decoder.decode(value))
-                  console.log(decodedJson)
-                } catch(error) {
-                  console.log(error)
-                  return;
-                }
-              },
-              500
-            );
-
-            setWasntSettedInterval(false);
-          }
+          setCharacteristic(await primary.getCharacteristic(CHAR_UUID));
+          await setisConnecting(true);
         }}
         >
           ジョイスティックと接続
         </Button>
       }
       <p>wasdか十字キーでも操作できます</p>
-      <NextReactP5Wrapper sketch={p5 => sketch(p5, xVal)} />
+      <NextReactP5Wrapper sketch={p5 => sketch(p5, characteristic)} />
     </main>
   );
 }

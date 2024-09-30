@@ -1,7 +1,7 @@
+let rotationX = 0;
+let rotationY = 0;
 
-export default function sketch(p5, xVal = 0) {
-  let rotationX = 0;
-  let rotationY = 0;
+export default function sketch(p5, characteristic) {
   let graphics;
 
   p5.setup = () => {
@@ -9,7 +9,22 @@ export default function sketch(p5, xVal = 0) {
     graphics = p5.createGraphics(600, 400);
   }
 
-  p5.draw = () => {
+  p5.draw = async () => {
+      try {
+        const value = await characteristic.readValue();
+  
+        const decoder = new TextDecoder("utf-8");
+        const decodedJson = JSON.parse(decoder.decode(value));
+  
+        console.log(decodedJson)
+        
+        rotationX += convertJoystickValue(decodedJson["y"]);
+        rotationY += convertJoystickValue(decodedJson["x"]);
+
+      } catch(error) {
+        // ハンドリング辛いので握り潰し
+      }
+
     p5.background(250);
     p5.normalMaterial();
     p5.push();
@@ -40,3 +55,17 @@ export default function sketch(p5, xVal = 0) {
     p5.image(graphics, -300, -200);
   };
 };
+
+
+const NEUTRAL = 0.51;
+const OFFSET = 0.02;
+
+const convertJoystickValue = (value) => {
+  const minNeutral = NEUTRAL - OFFSET;
+  if(value < minNeutral) return (value - minNeutral) * 0.8;
+  
+  const maxNeutral = NEUTRAL + OFFSET;
+  if(value > maxNeutral) return (value - maxNeutral) * 0.8;
+
+  return 0;
+}
