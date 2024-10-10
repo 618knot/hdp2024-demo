@@ -13,9 +13,6 @@ export default function MenubarDemo() {
   return (
     <Menubar className="absolute m-3">
       <MenubarMenu>
-        <Button variant="link" asChild>
-          <Link href="/">HOME <Home className="ml-0.5 opacity-60" /></Link>
-        </Button>
         {
           contents.map((content, index) => {
             return(
