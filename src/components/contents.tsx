@@ -9,7 +9,7 @@ type ContentProps = {
 export const contents: ContentProps[] = [
   {
     content: <>Bluetooth<Bluetooth className="ml-0.5 opacity-60" /></>,
-    path: "/bluetooth",
+    path: "/",
   },
   {
     content: <>Web API<Braces className="ml-0.5 opacity-60" /></>,
