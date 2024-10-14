@@ -6,7 +6,7 @@ import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import sketch from "@/p5/sketch.js";
 import { useState } from "react";
 import Title from "@/components/Title";
-import { Bluetooth, Flame } from "lucide-react";
+import { Bluetooth, Flame, Loader2 } from "lucide-react";
 
 const SERVICE_UUID = '96a3093b-708c-4abd-97d2-9d8b10c122ec';
 const CHAR_UUID = '206ff6bf-5f3e-4c9e-902f-b7762595ddd8';
@@ -52,7 +52,13 @@ export default function Home() {
           ジョイスティックと接続
         </Button>
       }
-      <p>wasdか十字キーでも操作できます</p>
+      <p className="flex">
+        {
+          isConnecting
+          ? <>接続中<Loader2 className="animate-spin" /></>
+          : "wasdか十字キーでも操作できます"
+        }
+      </p>
       <NextReactP5Wrapper sketch={p5 => sketch(p5, characteristic)} />
     </main>
   );
