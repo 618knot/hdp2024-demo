@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { requestDevice } from "@/util/ble/connect";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import sketch from "@/p5/sketch.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Title from "@/components/Title";
 import { Bluetooth, Flame, Loader2 } from "lucide-react";
 
@@ -13,11 +13,22 @@ const CHAR_UUID = '206ff6bf-5f3e-4c9e-902f-b7762595ddd8';
 const NAME_PREFIX = "hdp2024-";
 
 let device: any;
+let timer: NodeJS.Timeout;
 
 export default function Home() {
   const [characteristic, setCharacteristic] = useState<Object>({});
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isConnecting, setisConnecting] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isConnecting) {
+      timer = setTimeout(() => {
+        window.location.reload();
+      }, 30000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isConnecting]);
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">
@@ -28,6 +39,7 @@ export default function Home() {
           device.gatt.disconnect();
           setisConnecting(false);
           setIsPending(false);
+          clearTimeout(timer);
         }}
         disabled={!isConnecting}
         >
