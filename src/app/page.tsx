@@ -21,14 +21,14 @@ export default function Home() {
   const [isConnecting, setisConnecting] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isConnecting) {
+    if (!isConnecting && isPending) {
       timer = setTimeout(() => {
         window.location.reload();
       }, 30000);
 
       return () => clearTimeout(timer);
     }
-  }, [isConnecting]);
+  }, [isConnecting, isPending]);
 
   return (
     <main className="flex flex-col items-center justify-center h-screen">
@@ -66,7 +66,7 @@ export default function Home() {
       }
       <p className="flex">
         {
-          isConnecting
+          !isConnecting && isPending
           ? <>接続中<Loader2 className="animate-spin" /></>
           : "wasdか十字キーでも操作できます"
         }
